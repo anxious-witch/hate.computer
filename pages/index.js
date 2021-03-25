@@ -1,7 +1,37 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import Head from 'next/head';
+import styles from '../styles/Home.module.css';
+import { randomBytes, pbkdf2Sync, createDecipheriv } from 'crypto';
 
 export default function Home() {
+  // fetch("http://localhost:3000/paste/6044347d01e8782397da87f6").then((res) => {
+  //   res.json().then((foo) => {
+  //     console.log(foo);
+  //     const paste = foo.paste;
+  //     const cipherBuffer = Buffer.from(paste, "base64");
+
+  //     const salt = cipherBuffer.slice(0, 16);
+  //     const iv = cipherBuffer.slice(16, 32);
+  //     const cipherText = cipherBuffer.slice(32);
+
+  //     console.log({
+  //       salt: salt.toString("base64"),
+  //       iv: iv.toString("base64"),
+  //       cipherText: cipherText.toString("base64"),
+  //     });
+
+  //     const key = pbkdf2Sync("foobar", salt, 10000, 256 / 8, "sha256");
+  //     const decipher = createDecipheriv("aes-256-gcm", key, iv);
+
+  //     console.log({
+  //       key: key.toString("base64"),
+  //     });
+
+  //     let deciph = decipher.write(cipherText, "base64", "utf-8");
+
+  //     console.log(decipher.read().toString());
+  //   });
+  // });
+
   return (
     <div className={styles.container}>
       <Head>
@@ -61,5 +91,5 @@ export default function Home() {
         </a>
       </footer>
     </div>
-  )
+  );
 }
