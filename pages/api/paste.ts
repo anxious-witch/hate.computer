@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { connectToDatabase } from '~/util/database';
-import PasteModel, { Paste } from '~/schemas/Paste';
+import { encrypt } from '~/util/crypto';
+import PasteModel from '~/schemas/Paste';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
@@ -13,6 +14,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const paste = new PasteModel(req.body);
 
   if (req.body['passphrase']) {
+    paste.body = encrypt(paste.body, req.body['passphrase']);
     paste.encrypted = true;
   } else {
     paste.encrypted = false;
