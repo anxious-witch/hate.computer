@@ -1,13 +1,14 @@
 import { useRouter } from 'next/router';
+import { Container } from '~/components/Container';
 
 const Paste = () => {
   const router = useRouter();
   const { id } = router.query;
 
   return (
-    <div>
-      <p>paste: {id}</p>
-    </div>
+    <Container fullHeight backgroundColor="#fff000" padding="16px">
+      paste: {id}
+    </Container>
   );
 };
 
