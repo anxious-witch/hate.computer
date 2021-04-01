@@ -1,4 +1,4 @@
-import { Document, Model, Schema, model } from 'mongoose';
+import mongoose, { Document, Model, Schema, model, Mongoose } from 'mongoose';
 
 export interface Paste {
   title: string;
@@ -36,4 +36,5 @@ const PasteSchema = new Schema<PasteDocument, PasteModel>(
   }
 );
 
-export default model<PasteDocument, PasteModel>('Paste', PasteSchema);
+export default mongoose.models.Paste ||
+  model<PasteDocument, PasteModel>('Paste', PasteSchema);
