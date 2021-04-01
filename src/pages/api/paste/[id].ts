@@ -1,10 +1,7 @@
-// 6044347d01e8782397da87f6
-
 import { NextApiRequest, NextApiResponse } from 'next';
 import { connectToDatabase } from '~/util/database';
 import { isValidObjectId } from 'mongoose';
 import PasteModel from '~/schemas/Paste';
-import { decrypt } from '~/util/crypto';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {
