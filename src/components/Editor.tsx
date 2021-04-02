@@ -17,6 +17,10 @@ const styles = `
   height: 640px;
   font-family: "Fira Mono";
   border-radius: 4px;
+  overflow-wrap: break-word;
+  word-break: break-all;
+  hyphens: auto;
+  white-space: break-spaces;
 
   ::selection {
     background-color: #bd93f9;
@@ -26,10 +30,6 @@ const styles = `
 const StyledPre = styled.pre`
   ${styles};
   color: #ddd;
-  overflow-wrap: break-word;
-  word-break: break-all;
-  hyphens: auto;
-  white-space: pre-line;
 
   pointer-events: none;
   z-index: 100;
@@ -116,10 +116,11 @@ const StyledContainer = styled(Container)`
 
 const StyledTextArea = styled.textarea`
   ${styles};
-  resize: 0;
+  resize: none;
   color: transparent;
   caret-color: #fff;
   background: #282a36;
+  outline: none;
 `;
 
 const WrappedTextArea = (props: WrappedTextAreaProps) => {
