@@ -2,9 +2,10 @@ import React from 'react';
 import { CommonStyles, getEditorTheme } from './util';
 import styled from '@emotion/styled';
 
-const StyledPre = styled.pre`
+const StyledCode = styled.code`
   ${CommonStyles};
   color: #ddd;
+  position: relative;
 
   pointer-events: none;
   z-index: 100;
@@ -15,8 +16,8 @@ interface ViewProps {
   content: string;
 }
 export const View = (props: ViewProps) => (
-  <StyledPre
-    className="editor-view"
+  <StyledCode
+    className="editor-view line-numbers language-javascript"
     dangerouslySetInnerHTML={{ __html: props.content }}
   />
 );

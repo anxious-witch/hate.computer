@@ -6,10 +6,12 @@ const StyledTextArea = styled.textarea`
   ${CommonStyles};
   resize: none;
   outline: none;
+  height: 100%;
   ${getEditorTheme()}
 `;
 
 interface InputProps {
+  readonly?: boolean;
   content: string;
   handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
@@ -23,6 +25,7 @@ export const Input = (props: InputProps) => {
       autoComplete="false"
       autoCorrect="false"
       spellCheck="false"
+      disabled={props.readonly}
     />
   );
 };

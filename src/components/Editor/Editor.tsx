@@ -1,46 +1,54 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import Prism from 'prismjs';
-import { Container } from '~/components/Container';
 import { Input } from './Input';
 import { View } from './View';
 import { theme } from '~/util/theme';
+import { SupportedSyntax, Language } from '~/util/syntax';
 
-const StyledContainer = styled(Container)`
-  position: relative;
-  width: 100%;
-  height: 800px;
-  box-shadow: ${theme.shadows.box};
+const Wrapper = styled.div`
+  min-height: 400px;
+  max-height: 1200px;
+  overflow: auto;
 `;
 
-export const Editor = () => {
+const StyledContainer = styled.div`
+  position: relative;
+  width: 100%;
+  box-shadow: ${theme.shadows.box};
+  border-radius: ${theme.borders.radius};
+  min-height: 400px;
+  overflow: hidden;
+`;
+
+interface EditorProps {
+  readonly?: boolean;
+  language: Language;
+}
+export const Editor = ({ readonly, language }: EditorProps) => {
   const [content, setContent] = React.useState('');
   const [htmlContent, setHtmlContent] = React.useState('');
-  const [lineNumbers, setLineNumbers] = React.useState(1);
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(event.target.value);
   };
 
   React.useEffect(() => {
-    const lineNumbers = content.split('\n').length;
-    setLineNumbers(lineNumbers);
-
-    const highlighted = Prism.highlight(
-      content,
-      Prism.languages.javascript,
-      'javascript'
-    );
+    const highlighted =
+      Prism.highlight(content, SupportedSyntax[language], language) + '<br />';
     setHtmlContent(highlighted);
-  }, [content]);
+  }, [content, language]);
 
   return (
-    <React.Fragment>
-      {/* {lineNumbers} */}
+    <Wrapper>
       <StyledContainer>
-        <Input handleChange={handleChange} content={content} />
+        <Input
+          handleChange={handleChange}
+          content={content}
+          readonly={readonly}
+        />
         <View content={htmlContent} />
       </StyledContainer>
-    </React.Fragment>
+    </Wrapper>
   );
 };
