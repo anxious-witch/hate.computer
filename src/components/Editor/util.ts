@@ -7,6 +7,8 @@ export const CommonStyles = `
 
   position: absolute;
   top: 0;
+  left: 0;
+
   width: 100%;
   border: 0;
   margin: 0;

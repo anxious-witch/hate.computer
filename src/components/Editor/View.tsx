@@ -17,7 +17,7 @@ interface ViewProps {
 }
 export const View = (props: ViewProps) => (
   <StyledCode
-    className="editor-view line-numbers language-javascript"
+    className="editor-view"
     dangerouslySetInnerHTML={{ __html: props.content }}
   />
 );
