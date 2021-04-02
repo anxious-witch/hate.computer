@@ -11,6 +11,9 @@
   "dependencies": {
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
+    "@fontsource/fira-mono": "^4.2.2",
+    "@fontsource/open-sans": "^4.2.2",
+    "@fontsource/poppins": "^4.2.2",
     "emotion-normalize": "^11.0.1",
     "mongoose": "^5.12.2",
     "next": "10.0.8",
