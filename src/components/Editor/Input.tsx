@@ -25,7 +25,8 @@ export const Input = (props: InputProps) => {
       autoComplete="false"
       autoCorrect="false"
       spellCheck="false"
-      disabled={props.readonly}
+      readOnly={props.readonly}
+      placeholder="Code goes here"
     />
   );
 };

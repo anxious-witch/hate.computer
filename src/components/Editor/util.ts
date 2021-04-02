@@ -2,7 +2,6 @@ import { theme } from '~/util/theme';
 import { Dracula } from '~/assets/editor/dracula';
 
 export const CommonStyles = `
-  box-sizing: border-box;
   display: block;
 
   position: absolute;

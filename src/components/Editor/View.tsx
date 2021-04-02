@@ -10,6 +10,9 @@ const StyledCode = styled.code`
   pointer-events: none;
   z-index: 100;
   ${getEditorTheme()}
+  &:focus {
+    background-color: #f0f;
+  }
 `;
 
 interface ViewProps {

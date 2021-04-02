@@ -10,7 +10,8 @@
           "markup",
           "typescript",
           "python",
-          "tsx"
+          "tsx",
+          "jsx"
         ]
       }
     ]

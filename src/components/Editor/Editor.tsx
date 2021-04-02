@@ -9,15 +9,20 @@ import { SupportedSyntax, Language } from '~/util/syntax';
 
 const Wrapper = styled(Container)`
   min-height: 400px;
-  max-height: 1200px;
+  max-height: 80vh;
   overflow: auto;
+  box-shadow: ${theme.shadows.box};
+  border-radius: ${theme.borders.radius};
+  transition: ${theme.transitions.shadow};
+
+  &:focus-within {
+    box-shadow: ${theme.shadows.borderBox};
+  }
 `;
 
 const StyledContainer = styled(Container)`
   position: relative;
   width: 100%;
-  box-shadow: ${theme.shadows.box};
-  border-radius: ${theme.borders.radius};
   min-height: 400px;
   overflow: hidden;
 `;
@@ -36,7 +41,8 @@ export const Editor = ({ readonly, language }: EditorProps) => {
 
   React.useEffect(() => {
     const highlighted =
-      Prism.highlight(content, SupportedSyntax[language], language) + '<br />';
+      Prism.highlight(content, SupportedSyntax[language].grammar, language) +
+      '<br />';
     setHtmlContent(highlighted);
   }, [content, language]);
 

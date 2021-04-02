@@ -5,9 +5,14 @@ import emotionNormalized from 'emotion-normalize';
 export const Reset = () => (
   <Global
     styles={css`
-      ${emotionNormalized}
-      body: {
-        height: 100vh;
+      ${emotionNormalized};
+      body,
+      html,
+      #__next {
+        min-height: 100vh;
+      }
+      div {
+        box-sizing: border-box;
       }
     `}
   />
