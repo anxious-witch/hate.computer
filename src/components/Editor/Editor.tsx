@@ -4,15 +4,16 @@ import Prism from 'prismjs';
 import { Input } from './Input';
 import { View } from './View';
 import { theme } from '~/util/theme';
+import { Container } from '~/components/Layout';
 import { SupportedSyntax, Language } from '~/util/syntax';
 
-const Wrapper = styled.div`
+const Wrapper = styled(Container)`
   min-height: 400px;
   max-height: 1200px;
   overflow: auto;
 `;
 
-const StyledContainer = styled.div`
+const StyledContainer = styled(Container)`
   position: relative;
   width: 100%;
   box-shadow: ${theme.shadows.box};
