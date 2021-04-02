@@ -7,7 +7,7 @@ const Paste = () => {
   const { id } = router.query;
 
   return (
-    <Container fullHeight backgroundColor="#fff000" padding="16px">
+    <Container fullHeight padding="16px">
       paste: {id}
     </Container>
   );

@@ -1,10 +1,12 @@
 import React from 'react';
+import { Container } from '~/components/Container';
+import { Editor } from '~/components/Editor';
 
 const Index = () => {
   return (
-    <div>
-      <p>hate.computer</p>
-    </div>
+    <Container fullHeight padding="16px">
+      <Editor />
+    </Container>
   );
 };
 
