@@ -7,9 +7,10 @@ import {
   LabeledLanguage,
   SupportedSyntax,
 } from '~/util/syntax';
-import { Title, Select } from '~/components/Form';
-import styled from '@emotion/styled';
+import { Title, Select, Button } from '~/components/Form';
 import { theme } from '~/util/theme';
+import styled from '@emotion/styled';
+import { sendPaste } from '~/util/api';
 
 const StyledContainer = styled(Container)`
   background-color: ${theme.colors.backgroundLight};
@@ -22,8 +23,10 @@ const StyledColumn = styled(Column)`
 `;
 
 const Index = () => {
+  const [editorContent, setEditorContent] = React.useState('');
   const [language, setLanguage] = React.useState<Language>('typescript');
   const [title, setTitle] = React.useState('');
+
   const languages = Object.keys(SupportedSyntax)
     .map((key: Language) => {
       return {
@@ -41,7 +44,38 @@ const Index = () => {
 
   const handleTitleChange = (c: React.ChangeEvent<HTMLInputElement>) => {
     const value = c.target.value;
-    setTitle(value);
+    if (value.length < 256) {
+      setTitle(value);
+    }
+  };
+
+  const handleEditorChange = (c: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = c.target.value;
+    if (value.length < 10240) {
+      setEditorContent(value);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (title.length === 0) {
+      return;
+    }
+
+    if (language.length === 0) {
+      return;
+    }
+
+    if (editorContent.length === 0) {
+      return;
+    }
+
+    sendPaste(title, language, editorContent)
+      .then(res => {
+        return res.json();
+      })
+      .then(json => {
+        console.log(json);
+      });
   };
 
   return (
@@ -63,7 +97,14 @@ const Index = () => {
             }}
           />
         </Row>
-        <Editor language={language} />
+        <Editor
+          language={language}
+          handleChange={handleEditorChange}
+          content={editorContent}
+        />
+        <Button type="submit" onClick={handleSubmit}>
+          Paste {'>'}
+        </Button>
       </StyledColumn>
     </StyledContainer>
   );

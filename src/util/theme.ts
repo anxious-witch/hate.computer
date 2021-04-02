@@ -5,6 +5,7 @@ export const theme = {
     background: '#282a36',
     backgroundLight: '#383a59',
     text: '#f8f8f2',
+    purple: '#a569bd',
   },
   fonts: {
     heading: 'Poppins',
@@ -23,5 +24,9 @@ export const theme = {
   },
   transitions: {
     shadow: '.3s box-shadow',
+    background: '.4s background',
+  },
+  gradients: {
+    pink: 'linear-gradient(to left, #ff0099, #a569bd)',
   },
 };

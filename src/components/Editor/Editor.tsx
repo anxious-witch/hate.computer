@@ -6,6 +6,7 @@ import { View } from './View';
 import { theme } from '~/util/theme';
 import { Container } from '~/components/Layout';
 import { SupportedSyntax, Language } from '~/util/syntax';
+import { LengthIndicator } from './LengthIndicator';
 
 const Wrapper = styled(Container)`
   min-height: 400px;
@@ -29,15 +30,17 @@ const StyledContainer = styled(Container)`
 
 interface EditorProps {
   readonly?: boolean;
+  handleChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   language: Language;
+  content: string;
 }
-export const Editor = ({ readonly, language }: EditorProps) => {
-  const [content, setContent] = React.useState('');
+export const Editor = ({
+  readonly,
+  language,
+  handleChange,
+  content,
+}: EditorProps) => {
   const [htmlContent, setHtmlContent] = React.useState('');
-
-  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(event.target.value);
-  };
 
   React.useEffect(() => {
     const highlighted =
@@ -49,6 +52,7 @@ export const Editor = ({ readonly, language }: EditorProps) => {
   return (
     <Wrapper>
       <StyledContainer>
+        <LengthIndicator content={content} />
         <Input
           handleChange={handleChange}
           content={content}
