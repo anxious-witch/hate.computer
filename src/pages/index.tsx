@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container } from '~/components/Container';
-import { Editor } from '~/components/Editor';
+import { Editor } from '~/components/Editor/index';
 
 const Index = () => {
   return (
