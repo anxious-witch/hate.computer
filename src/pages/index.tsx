@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Column, Container, FlexSpacer } from '~/components/Layout';
+import { Row, Column, FlexSpacer, Background } from '~/components/Layout';
 import { Editor } from '~/components/Editor/index';
 import {
   Language,
@@ -7,15 +7,11 @@ import {
   LabeledLanguage,
   SupportedSyntax,
 } from '~/util/syntax';
-import { Title, Select, Button } from '~/components/Form';
-import { theme } from '~/util/theme';
+import { Input, Select, Button } from '~/components/Form';
 import styled from '@emotion/styled';
 import { sendPaste } from '~/util/api';
-
-const StyledContainer = styled(Container)`
-  background-color: ${theme.colors.backgroundLight};
-  min-height: 100vh;
-`;
+import { PasswordModal } from '~/components/PasswordModal';
+import { buildPasteUrl } from '~/util/helpers';
 
 const StyledColumn = styled(Column)`
   max-width: 1200px;
@@ -26,6 +22,10 @@ const Index = () => {
   const [editorContent, setEditorContent] = React.useState('');
   const [language, setLanguage] = React.useState<Language>('typescript');
   const [title, setTitle] = React.useState('');
+  const [passphrase, setPassphrase] = React.useState('');
+  const [modalOpen, setPasswordModalOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [pasteUrl, setPasteUrl] = React.useState('');
 
   const languages = Object.keys(SupportedSyntax)
     .map((key: Language) => {
@@ -56,6 +56,13 @@ const Index = () => {
     }
   };
 
+  const handlePassphraseChange = (c: React.ChangeEvent<HTMLInputElement>) => {
+    const value = c.target.value;
+    if (value.length < 256) {
+      setPassphrase(value);
+    }
+  };
+
   const handleSubmit = () => {
     if (title.length === 0) {
       return;
@@ -68,21 +75,34 @@ const Index = () => {
     if (editorContent.length === 0) {
       return;
     }
+    setPasswordModalOpen(true);
+  };
 
-    sendPaste(title, language, editorContent)
+  const handleModalSubmit = () => {
+    setLoading(true);
+
+    sendPaste(title, language, editorContent, passphrase)
       .then(res => {
         return res.json();
       })
       .then(json => {
-        console.log(json);
+        const id = json['_id'];
+        setPasteUrl(buildPasteUrl(id));
+        setLoading(false);
       });
   };
 
+  const handleModalClose = () => {
+    setPasswordModalOpen(false);
+    setPasteUrl('');
+    setPassphrase('');
+  };
+
   return (
-    <StyledContainer fullHeight padding="32px">
+    <Background fullHeight padding="32px">
       <StyledColumn>
         <Row padding="0 0px 24px 0px">
-          <Title
+          <Input
             placeholder="Title"
             onChange={handleTitleChange}
             value={title}
@@ -106,7 +126,17 @@ const Index = () => {
           Paste {'>'}
         </Button>
       </StyledColumn>
-    </StyledContainer>
+      <PasswordModal
+        mode="encrypt"
+        open={modalOpen}
+        loading={loading}
+        handleClose={handleModalClose}
+        handleSubmit={handleModalSubmit}
+        setPassphrase={handlePassphraseChange}
+        passphrase={passphrase}
+        pasteUrl={pasteUrl}
+      />
+    </Background>
   );
 };
 

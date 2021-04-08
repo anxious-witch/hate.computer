@@ -1,15 +1,17 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { Container } from '~/components/Container';
+import { Background } from '~/components/Layout';
 
 const Paste = () => {
   const router = useRouter();
   const { id } = router.query;
 
+  console.log(router.query);
+
   return (
-    <Container fullHeight padding="16px">
+    <Background fullHeight padding="32px">
       paste: {id}
-    </Container>
+    </Background>
   );
 };
 

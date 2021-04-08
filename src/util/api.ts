@@ -1,6 +1,14 @@
+import { encrypt } from './crypto';
 import { Language } from './syntax';
 
-export const sendPaste = (title: string, language: Language, body: string) => {
+export const sendPaste = (
+  title: string,
+  language: Language,
+  content: string,
+  passphrase: string
+) => {
+  const body = encrypt(content, passphrase);
+
   return fetch('/api/paste', {
     method: 'POST',
     headers: {
@@ -10,6 +18,7 @@ export const sendPaste = (title: string, language: Language, body: string) => {
       title,
       language,
       body,
+      encrypted: true,
     }),
   });
 };

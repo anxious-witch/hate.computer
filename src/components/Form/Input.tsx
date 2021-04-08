@@ -6,7 +6,7 @@ type WrappedInputProps = React.ComponentPropsWithoutRef<'input'>;
 
 export const WrappedInput = (props: WrappedInputProps) => <input {...props} />;
 
-export const Title = styled(WrappedInput)`
+export const Input = styled(WrappedInput)`
   flex: 1 1 auto;
   font-family: ${theme.fonts.mono};
   font-size: 16px;
