@@ -8,7 +8,7 @@ Add the mongodb URI to your environment variables:
 
 ```bash
 cp .env.local.example .env.local
-vim next.config.js
+vim .env.local
 ```
 
 Run the development server:
