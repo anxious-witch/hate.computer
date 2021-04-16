@@ -1,8 +1,10 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { Button, ClipboardButton, Input } from '~/components/Form';
+import { Button, Input } from '~/components/Form';
 import { Row } from '~/components/Layout';
 import { Modal } from './Modal';
+import { UseFormRegister } from 'react-hook-form';
+import { PassphraseForm } from '~/util/form';
 
 const StyledInput = styled(Input)`
   padding: 11px;
@@ -18,9 +20,7 @@ interface EncryptModalProps {
   loading: boolean;
   handleClose: () => void;
   handleSubmit: () => void;
-  pasteUrl?: string;
-  passphrase: string;
-  setPassphrase: (inputChange: React.ChangeEvent<HTMLInputElement>) => void;
+  register: UseFormRegister<PassphraseForm>;
 }
 
 export const EncryptModal = (props: EncryptModalProps) => {
@@ -36,36 +36,24 @@ export const EncryptModal = (props: EncryptModalProps) => {
 
   return (
     <Modal isOpen={props.open} onRequestClose={props.handleClose}>
-      {props.pasteUrl ? (
-        <React.Fragment>
-          <Row>
-            <StyledInput value={props.pasteUrl} readOnly={true} />
-            <ClipboardButton value={props.pasteUrl} />
-          </Row>
-        </React.Fragment>
-      ) : (
-        <React.Fragment>
-          <Row>
-            <StyledInput
-              type="password"
-              placeholder="passphrase"
-              onChange={props.setPassphrase}
-              value={props.passphrase}
-              onKeyDown={handleKeyDown}
-              autoFocus
-            />
-          </Row>
-          <Row>
-            <StyledButton
-              type="submit"
-              onClick={props.handleSubmit}
-              disabled={props.loading}
-            >
-              {'encrypt >'}
-            </StyledButton>
-          </Row>
-        </React.Fragment>
-      )}
+      <Row>
+        <StyledInput
+          type="password"
+          placeholder="passphrase"
+          {...props.register('passphrase', { required: true, maxLength: 256 })}
+          onKeyDown={handleKeyDown}
+          autoFocus
+        />
+      </Row>
+      <Row>
+        <StyledButton
+          type="submit"
+          onClick={props.handleSubmit}
+          disabled={props.loading}
+        >
+          {'encrypt >'}
+        </StyledButton>
+      </Row>
     </Modal>
   );
 };

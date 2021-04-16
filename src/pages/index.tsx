@@ -1,17 +1,13 @@
 import React from 'react';
 import { Row, Column, FlexSpacer, Background } from '~/components/Layout';
 import { Editor } from '~/components/Editor/index';
-import {
-  Language,
-  LanguageMap,
-  LabeledLanguage,
-  SupportedSyntax,
-} from '~/util/syntax';
+import { Language, LanguageMap, SupportedSyntax } from '~/util/syntax';
 import { Input, Select, Button } from '~/components/Form';
 import styled from '@emotion/styled';
 import { sendPaste } from '~/util/api';
-import { EncryptModal } from '~/components/Modal';
-import { buildPasteUrl } from '~/util/helpers';
+import { EncryptModal, ClipboardModal } from '~/components/Modal';
+import { buildPasteUrl, PassphraseForm, PasteForm } from '~/util/form';
+import { useForm, Controller } from 'react-hook-form';
 
 const StyledColumn = styled(Column)`
   max-width: 1200px;
@@ -19,13 +15,23 @@ const StyledColumn = styled(Column)`
 `;
 
 const Index = () => {
-  const [editorContent, setEditorContent] = React.useState('');
-  const [language, setLanguage] = React.useState<Language>('typescript');
-  const [title, setTitle] = React.useState('');
-  const [passphrase, setPassphrase] = React.useState('');
-  const [modalOpen, setModalOpen] = React.useState(false);
+  const [encryptModalOpen, setEncryptModalOpen] = React.useState(false);
+  const [clipboardModalOpen, setClipboardModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [pasteUrl, setPasteUrl] = React.useState('');
+
+  const {
+    register: pasteRegister,
+    control: pasteControl,
+    handleSubmit: pasteHandleSubmit,
+    getValues: pasteGetValues,
+  } = useForm<PasteForm>();
+
+  const {
+    register: passphraseRegister,
+    handleSubmit: passphraseHandleSubmit,
+    reset: passphraseReset,
+  } = useForm<PassphraseForm>();
 
   const languages = Object.keys(SupportedSyntax)
     .map((key: Language) => {
@@ -38,50 +44,16 @@ const Index = () => {
       return a.label.localeCompare(b.label);
     }) as LanguageMap;
 
-  const handleSelectChange = (value: LabeledLanguage) => {
-    setLanguage(value.value);
+  const onSubmit = () => {
+    console.log(pasteGetValues());
+    setEncryptModalOpen(true);
   };
 
-  const handleTitleChange = (c: React.ChangeEvent<HTMLInputElement>) => {
-    const value = c.target.value;
-    if (value.length < 256) {
-      setTitle(value);
-    }
-  };
-
-  const handleEditorChange = (c: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = c.target.value;
-    if (value.length < 10240) {
-      setEditorContent(value);
-    }
-  };
-
-  const handlePassphraseChange = (c: React.ChangeEvent<HTMLInputElement>) => {
-    const value = c.target.value;
-    if (value.length < 256) {
-      setPassphrase(value);
-    }
-  };
-
-  const handleSubmit = () => {
-    if (title.length === 0) {
-      return;
-    }
-
-    if (language.length === 0) {
-      return;
-    }
-
-    if (editorContent.length === 0) {
-      return;
-    }
-    setModalOpen(true);
-  };
-
-  const handleModalSubmit = () => {
+  const onModalSubmit = (data: PassphraseForm) => {
+    const form = { ...data, ...pasteGetValues() };
     setLoading(true);
 
-    sendPaste(title, language, editorContent, passphrase)
+    sendPaste(form)
       .then(res => {
         return res.json();
       })
@@ -89,13 +61,15 @@ const Index = () => {
         const id = json['_id'];
         setPasteUrl(buildPasteUrl(id));
         setLoading(false);
+        setClipboardModalOpen(true);
+        setEncryptModalOpen(false);
       });
   };
 
   const handleModalClose = () => {
-    setModalOpen(false);
-    setPasteUrl('');
-    setPassphrase('');
+    setEncryptModalOpen(false);
+    setClipboardModalOpen(false);
+    passphraseReset();
   };
 
   return (
@@ -104,36 +78,32 @@ const Index = () => {
         <Row padding="0 0px 24px 0px">
           <Input
             placeholder="Title"
-            onChange={handleTitleChange}
-            value={title}
+            {...pasteRegister('title', { required: true, maxLength: 256 })}
           />
           <FlexSpacer />
-          <Select
-            onChange={handleSelectChange}
-            options={languages}
-            defaultValue={{
-              value: language,
-              label: 'TypeScript',
-            }}
+          <Controller
+            control={pasteControl}
+            name="language"
+            rules={{ required: true }}
+            render={({ field }) => <Select {...field} options={languages} />}
           />
         </Row>
-        <Editor
-          language={language}
-          handleChange={handleEditorChange}
-          content={editorContent}
-        />
-        <Button type="submit" onClick={handleSubmit}>
+        <Editor control={pasteControl} register={pasteRegister} />
+        <Button type="submit" onClick={pasteHandleSubmit(onSubmit)}>
           Paste {'>'}
         </Button>
       </StyledColumn>
       <EncryptModal
-        open={modalOpen}
+        open={encryptModalOpen}
         loading={loading}
         handleClose={handleModalClose}
-        handleSubmit={handleModalSubmit}
-        setPassphrase={handlePassphraseChange}
-        passphrase={passphrase}
+        handleSubmit={passphraseHandleSubmit(onModalSubmit)}
+        register={passphraseRegister}
+      />
+      <ClipboardModal
+        open={clipboardModalOpen}
         pasteUrl={pasteUrl}
+        handleClose={handleModalClose}
       />
     </Background>
   );

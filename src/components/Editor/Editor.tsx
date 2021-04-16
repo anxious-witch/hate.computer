@@ -5,8 +5,10 @@ import { Input } from './Input';
 import { View } from './View';
 import { theme } from '~/util/theme';
 import { Container } from '~/components/Layout';
-import { SupportedSyntax, Language } from '~/util/syntax';
+import { SupportedSyntax } from '~/util/syntax';
 import { LengthIndicator } from './LengthIndicator';
+import { Control, UseFormRegister, useWatch } from 'react-hook-form';
+import { PasteForm } from '~/util/form';
 
 const Wrapper = styled(Container)`
   min-height: 400px;
@@ -29,23 +31,35 @@ const StyledContainer = styled(Container)`
 `;
 
 interface EditorProps {
-  readonly?: boolean;
-  handleChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  language: Language;
-  content: string;
+  readOnly?: boolean;
+  register: UseFormRegister<PasteForm>;
+  control: Control<PasteForm>;
 }
-export const Editor = ({
-  readonly,
-  language,
-  handleChange,
-  content,
-}: EditorProps) => {
+export const Editor = ({ readOnly, register, control }: EditorProps) => {
   const [htmlContent, setHtmlContent] = React.useState('');
+
+  const content = useWatch({
+    control,
+    name: 'body',
+    defaultValue: '',
+  });
+
+  const language = useWatch({
+    control,
+    name: 'language',
+    defaultValue: {
+      label: 'Diff',
+      value: 'diff',
+    },
+  });
 
   React.useEffect(() => {
     const highlighted =
-      Prism.highlight(content, SupportedSyntax[language].grammar, language) +
-      '<br />';
+      Prism.highlight(
+        content,
+        SupportedSyntax[language.value].grammar,
+        language.value
+      ) + '<br />';
     setHtmlContent(highlighted);
   }, [content, language]);
 
@@ -54,9 +68,8 @@ export const Editor = ({
       <StyledContainer>
         <LengthIndicator content={content} />
         <Input
-          handleChange={handleChange}
-          content={content}
-          readonly={readonly}
+          readOnly={readOnly}
+          {...register('body', { required: true, maxLength: 10240 })}
         />
         <View content={htmlContent} />
       </StyledContainer>

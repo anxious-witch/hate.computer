@@ -3,6 +3,8 @@ import styled from '@emotion/styled';
 import { Button, Input } from '~/components/Form';
 import { Row } from '~/components/Layout';
 import { Modal } from './Modal';
+import { UseFormRegister } from 'react-hook-form';
+import { PassphraseForm } from '~/util/form';
 
 const StyledInput = styled(Input)`
   padding: 11px;
@@ -18,9 +20,7 @@ interface DecryptModalProps {
   loading: boolean;
   handleClose: () => void;
   handleSubmit: () => void;
-  pasteUrl?: string;
-  passphrase: string;
-  setPassphrase: (inputChange: React.ChangeEvent<HTMLInputElement>) => void;
+  register: UseFormRegister<PassphraseForm>;
 }
 
 export const DecryptModal = (props: DecryptModalProps) => {
@@ -36,8 +36,10 @@ export const DecryptModal = (props: DecryptModalProps) => {
             <StyledInput
               type="password"
               placeholder="passphrase"
-              onChange={props.setPassphrase}
-              value={props.passphrase}
+              {...props.register('passphrase', {
+                required: true,
+                maxLength: 256,
+              })}
               autoFocus
             />
           </Row>

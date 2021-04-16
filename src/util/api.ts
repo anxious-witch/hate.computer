@@ -1,13 +1,8 @@
 import { encrypt } from './crypto';
-import { Language } from './syntax';
+import { Form } from './form';
 
-export const sendPaste = (
-  title: string,
-  language: Language,
-  content: string,
-  passphrase: string
-) => {
-  const body = encrypt(content, passphrase);
+export const sendPaste = (data: Form) => {
+  const body = encrypt(data.body, data.passphrase);
 
   return fetch('/api/paste', {
     method: 'POST',
@@ -15,8 +10,8 @@ export const sendPaste = (
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      title,
-      language,
+      title: data.title,
+      language: data.language,
       body,
       encrypted: true,
     }),

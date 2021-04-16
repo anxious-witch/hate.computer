@@ -2,9 +2,15 @@ import styled from '@emotion/styled';
 import React from 'react';
 import { theme } from '~/util/theme';
 
-type WrappedInputProps = React.ComponentPropsWithoutRef<'input'>;
+type WrappedInputProps = React.ComponentPropsWithRef<'input'>;
 
-export const WrappedInput = (props: WrappedInputProps) => <input {...props} />;
+// eslint-disable-next-line react/display-name
+export const WrappedInput = React.forwardRef<
+  HTMLInputElement,
+  WrappedInputProps
+>((props: WrappedInputProps, ref: React.ForwardedRef<HTMLInputElement>) => (
+  <input {...props} ref={ref} />
+));
 
 export const Input = styled(WrappedInput)`
   flex: 1 1 auto;

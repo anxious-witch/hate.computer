@@ -37,15 +37,18 @@ const SelectStyles: StylesConfig<
 
 type WrappedSelectProps = React.ComponentPropsWithoutRef<typeof ReactSelect>;
 
-const WrappedSelect = (props: WrappedSelectProps) => {
-  return (
+// eslint-disable-next-line react/display-name
+const WrappedSelect = React.forwardRef<ReactSelect, WrappedSelectProps>(
+  (props: WrappedSelectProps, ref: React.ForwardedRef<ReactSelect>) => (
     <ReactSelect
       {...props}
+      ref={ref}
       instanceId="language-select"
       styles={SelectStyles}
     />
-  );
-};
+  )
+);
+
 export const Select = styled(WrappedSelect)`
   width: 240px;
   font-family: ${theme.fonts.mono};

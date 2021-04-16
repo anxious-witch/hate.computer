@@ -6,9 +6,10 @@ import { Paste as PasteType } from '~/schemas/Paste';
 import { DecryptModal } from '~/components/Modal';
 import { decrypt } from '~/util/crypto';
 import { Editor } from '~/components/Editor';
-import { Language } from '~/util/syntax';
 import { theme } from '~/util/theme';
 import styled from '@emotion/styled';
+import { useForm } from 'react-hook-form';
+import { PasteForm, PassphraseForm } from '~/util/form';
 
 const StyledColumn = styled(Column)`
   max-width: 1200px;
@@ -37,10 +38,21 @@ const Paste = () => {
   const router = useRouter();
   const { id } = router.query;
   const [paste, setPaste] = React.useState<PasteType>();
-  const [passphrase, setPassphrase] = React.useState('');
   const [modalOpen, setModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [decrypted, setDecrypted] = React.useState(false);
+
+  const {
+    control: pasteControl,
+    register: pasteRegister,
+    setValue: pasteSetValue,
+  } = useForm<PasteForm>();
+
+  const {
+    register: passphraseRegister,
+    handleSubmit: passphraseHandleSubmit,
+    reset: passphraseReset,
+  } = useForm<PassphraseForm>();
 
   React.useEffect(() => {
     if (id && !paste) {
@@ -52,7 +64,7 @@ const Paste = () => {
           return Promise.reject('NOPE');
         })
         .catch(() => router.push('/404'))
-        .then(json => setPaste(json));
+        .then(setPaste);
     }
   }, [id, paste, router]);
 
@@ -62,22 +74,21 @@ const Paste = () => {
     }
   }, [paste, decrypted]);
 
-  const handlePassphraseChange = (c: React.ChangeEvent<HTMLInputElement>) => {
-    const value = c.target.value;
-    if (value.length < 256) {
-      setPassphrase(value);
+  React.useEffect(() => {
+    if (paste) {
+      Object.keys(paste).forEach((k: keyof PasteForm) => {
+        pasteSetValue(k, paste[k]);
+      });
     }
-  };
+  }, [paste, pasteSetValue]);
 
-  const handleModalSubmit = () => {
+  const onSubmit = (data: PassphraseForm) => {
     setLoading(true);
 
-    const plaintext = decrypt(paste.body, passphrase);
-    const decryptedPaste = Object.assign({}, paste);
-    decryptedPaste.body = plaintext;
-    setPaste(decryptedPaste);
+    const plaintext = decrypt(paste.body, data.passphrase);
+    pasteSetValue('body', plaintext);
 
-    setPassphrase('');
+    passphraseReset();
     setModalOpen(false);
     setLoading(false);
     setDecrypted(true);
@@ -85,31 +96,26 @@ const Paste = () => {
 
   const handleModalClose = () => {
     setModalOpen(true);
-    setPassphrase('');
+    passphraseReset();
   };
 
   return (
     <Background fullHeight padding="32px">
       <DecryptModal
+        register={passphraseRegister}
         open={modalOpen}
         loading={loading}
         handleClose={handleModalClose}
-        handleSubmit={handleModalSubmit}
-        setPassphrase={handlePassphraseChange}
-        passphrase={passphrase}
+        handleSubmit={passphraseHandleSubmit(onSubmit)}
       />
       {paste ? (
         <StyledColumn>
           <StyledRow padding="0 0px 24px 0px">
             <Header>{paste.title}</Header>
             <FlexSpacer />
-            <Text>{paste.language}</Text>
+            <Text>{paste.language.label}</Text>
           </StyledRow>
-          <Editor
-            language={paste.language as Language}
-            content={paste.body}
-            readonly
-          />
+          <Editor control={pasteControl} register={pasteRegister} readOnly />
         </StyledColumn>
       ) : null}
     </Background>

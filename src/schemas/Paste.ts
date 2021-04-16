@@ -1,8 +1,9 @@
 import mongoose, { Document, Model, Schema, model } from 'mongoose';
+import { LabeledLanguage } from '~/util/syntax';
 
 export interface Paste {
   title: string;
-  language: string;
+  language: LabeledLanguage;
   body: string;
   encrypted: boolean;
   passphrase?: string;
@@ -19,8 +20,14 @@ const PasteSchema = new Schema<PasteDocument, PasteModel>(
       required: true,
     },
     language: {
-      type: String,
-      required: true,
+      label: {
+        type: String,
+        required: true,
+      },
+      value: {
+        type: String,
+        required: true,
+      },
     },
     body: {
       type: String,
