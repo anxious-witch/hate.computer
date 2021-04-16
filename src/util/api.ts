@@ -24,5 +24,10 @@ export const sendPaste = (
 };
 
 export const getPaste = (id: string) => {
-  return fetch(`/api/paste/${id}`);
+  return fetch(`/api/paste/${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 };

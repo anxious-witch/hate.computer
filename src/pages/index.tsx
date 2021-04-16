@@ -10,7 +10,7 @@ import {
 import { Input, Select, Button } from '~/components/Form';
 import styled from '@emotion/styled';
 import { sendPaste } from '~/util/api';
-import { PasswordModal } from '~/components/PasswordModal';
+import { EncryptModal } from '~/components/Modal';
 import { buildPasteUrl } from '~/util/helpers';
 
 const StyledColumn = styled(Column)`
@@ -23,7 +23,7 @@ const Index = () => {
   const [language, setLanguage] = React.useState<Language>('typescript');
   const [title, setTitle] = React.useState('');
   const [passphrase, setPassphrase] = React.useState('');
-  const [modalOpen, setPasswordModalOpen] = React.useState(false);
+  const [modalOpen, setModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [pasteUrl, setPasteUrl] = React.useState('');
 
@@ -75,7 +75,7 @@ const Index = () => {
     if (editorContent.length === 0) {
       return;
     }
-    setPasswordModalOpen(true);
+    setModalOpen(true);
   };
 
   const handleModalSubmit = () => {
@@ -93,7 +93,7 @@ const Index = () => {
   };
 
   const handleModalClose = () => {
-    setPasswordModalOpen(false);
+    setModalOpen(false);
     setPasteUrl('');
     setPassphrase('');
   };
@@ -126,8 +126,7 @@ const Index = () => {
           Paste {'>'}
         </Button>
       </StyledColumn>
-      <PasswordModal
-        mode="encrypt"
+      <EncryptModal
         open={modalOpen}
         loading={loading}
         handleClose={handleModalClose}
